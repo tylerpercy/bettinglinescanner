@@ -1,19 +1,15 @@
+from typing import List, Tuple
+
 class match:
 
-    home_team_id: str
-    home_spread: str
-    away_team_id: str
-    away_spread: str
-    total: float
-
-    def __init__(self, homeTeamId, homeSpread, awayTeamId, awaySpread, total):
+    def __init__(self, homeTeamId: str, homeSpread: str, awayTeamId: str, awaySpread: str, total: float):
         self.home_team_id = homeTeamId
         self.home_spread = homeSpread
         self.away_team_id = awayTeamId
         self.away_spread = awaySpread
         self.total = total
 
-    def __str__(self):
+    def __str__(self) -> str:
         return (
             "```"
             f"Away Team: {self.away_team_id} ({self.away_spread})\n"
@@ -22,7 +18,7 @@ class match:
             "```"
         )
     
-def build_match_list(betting_lines, team_ids):
+def build_match_list(betting_lines: List[str], team_ids: List[str]) -> List[match]:
 
     matches = []
 
