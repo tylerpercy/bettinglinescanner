@@ -19,6 +19,8 @@ async def get_data(ctx, sport_id: str = None, sport_team: str = None, *args):
         "nfl": os.getenv('URL_NFL'),
         "nba": os.getenv('URL_NBA'),
         "nhl": os.getenv('URL_NHL'),
+        "cfb" or "ncaaf": os.getenv('URL_CFB'),
+        "ncaam" or "ncaab": os.getenv('URL_NCAAM')
     }
 
     url = sport_urls.get(sport_id.lower())
@@ -26,10 +28,23 @@ async def get_data(ctx, sport_id: str = None, sport_team: str = None, *args):
         await ctx.send(f"Invalid sport_id: {sport_id}. Please specify 'nfl', 'nba', or 'nhl'.")
         return
 
-    betting_lines, team_ids = await get_sport_data(url)
-    matches = build_match_list(betting_lines, team_ids)
+    betting_lines, team_ids, event_start_times = await get_sport_data(url)
+    matches = build_match_list(betting_lines, team_ids, event_start_times)
 
-    msg = "\n".join(str(match) for match in matches)
+    if sport_team:
+        team_found = next(
+        (match for match in matches 
+         if sport_team.lower() in match.home_team_id.lower() or 
+            sport_team.lower() in match.away_team_id.lower()), 
+        None
+    )
+        if team_found:
+            msg = team_found
+        else:
+            msg = f"No match found for team: {sport_team}"
+    else:
+        msg = "\n".join(str(match) for match in matches)
+
     await ctx.send(msg)
 
 load_dotenv()
